@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
-
+const courses = [
+  { id: 1, course: "course1" },
+  { id: 2, course: "course2" },
+  { id: 3, course: "course3" },
+];
 app.get("/", (req, res) => {
   res.send("Hello world !!!");
 });
@@ -9,15 +13,17 @@ app.get("/contact", (req, res) => {
   res.send([1, 3, 4]);
 });
 
-//TODO - Router Parameters
-// *
-app.get("/api/courses/:year/:month", (req, res) => {
-  // ?  res.send(req.params); for getting the parameters from the https req
-  //?  res.send(req.query); for getting the query that we have passed !
+// TODO - HTTP GET Request
+app.get("/api/courses/:id", (req, res) => {
+  const course = courses.find((c) => c.id === parseInt(req.params.id));
+  if (!course) {
+    res
+      .status(404)
+      .send("The course that you are trying to find is not available");
+  }
+  res.send(course);
 });
-//? Setting the Environment Port
-const port = process.env.PORT || 3000;
 
-//* If the port value was giving then that will be set otherwise the hardcoded 3000 value will be used for the port
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
