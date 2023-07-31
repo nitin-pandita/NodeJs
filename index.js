@@ -1,7 +1,6 @@
+const Joi = require("joi");
 const express = require("express");
 const app = express();
-
-//* Adding the middle wear
 app.use(express.json());
 const courses = [
   { id: 1, course: "course1" },
@@ -11,7 +10,6 @@ const courses = [
 app.get("/", (req, res) => {
   res.send("Hello world !!!");
 });
-// creating another request
 app.get("/contact", (req, res) => {
   res.send([1, 3, 4]);
 });
@@ -20,14 +18,23 @@ app.get("/api/courses", (req, res) => {
   res.send(courses);
 });
 
-// TODO - HTTP Post request
 app.post("/api/courses", (req, res) => {
+  const schema = Joi.object({
+    name: Joi.string().min(4).required(),
+  });
+
+  //* Using the JOI
+  const { error } = schema.validate(req.body); // Destructure the 'error' property
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
   const course = {
     id: courses.length + 1,
-    name: req.body.name, //* requesting from the user
+    name: req.body.name,
   };
-  courses.push(course); //* pushing the new course to the courses array
-  res.send(course); //* sending the course
+  courses.push(course);
+  res.send(course);
 });
 
 const port = process.env.PORT || 3000;
