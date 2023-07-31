@@ -8,6 +8,13 @@ app.get("/", (req, res) => {
 app.get("/contact", (req, res) => {
   res.send([1, 3, 4]);
 });
+
+//TODO - Router Parameters
+// *
+app.get("/api/courses/:year/:month", (req, res) => {
+  // ?  res.send(req.params); for getting the parameters from the https req
+  //?  res.send(req.query); for getting the query that we have passed !
+});
 //? Setting the Environment Port
 const port = process.env.PORT || 3000;
 
