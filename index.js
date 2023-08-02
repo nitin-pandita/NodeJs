@@ -1,12 +1,40 @@
 const Joi = require("joi"); // Import Joi module correctly
+const helmet = require('helmet');
+const morgan = require('morgan')
+// importing the middleware function
+const logger = require("./middleware");
 const express = require("express");
 const app = express();
-app.use(express.json());
+
+// TODO - Build in MiddleWare
+
+app.use(express.json()); // req.body
+
+app.use(express.urlencoded());
+
+app.use(express.static("public"));
+
+app.use(helmet());
+
+app.use(morgan('tiny'));
+
+//Todo - MiddleWare function
+
+app.use(logger);
+app.use(function (req, res, next) {
+  console.log("Authentication");
+  // it is necessary to put the next() for giving the access to other middle wear
+  next();
+});
+
 const courses = [
   { id: 1, course: "course1" },
   { id: 2, course: "course2" },
   { id: 3, course: "course3" },
+  { id: 4, course: "course4" },
 ];
+
+// TODO - GET method
 app.get("/", (req, res) => {
   res.send("Hello world !!!");
 });
@@ -18,6 +46,7 @@ app.get("/api/courses", (req, res) => {
   res.send(courses);
 });
 
+//Todo - Post Method
 app.post("/api/courses", (req, res) => {
   const schema = Joi.object({
     name: Joi.string().min(4).required(),
@@ -65,6 +94,25 @@ function validateFunction(course) {
 
   return schema.validate(course); // Return the validation result
 }
+
+//TODO - DELETE method
+
+app.delete("/api/courses/:id", (req, res) => {
+  //? Look up the course
+  //? If not exist, return 404 error
+  const course = courses.find((c) => c.id === parseInt(req.params.id));
+  if (!course) {
+    res.status(404).send("This course does not exist. Try again.");
+    return;
+  }
+
+  //? Delete the course
+  const index = courses.findIndex((c) => c.id === parseInt(req.params.id));
+  courses.splice(index, 1);
+
+  // Return a message confirming the deletion
+  res.send(`Course with ID ${req.params.id} has been deleted.`);
+});
 
 const port = process.env.PORT || 3000;
 
