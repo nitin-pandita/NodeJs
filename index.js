@@ -11,6 +11,11 @@ const logger = require("./middleware");
 const express = require("express");
 const app = express();
 
+// Todo - Templating Engine
+
+app.set('view engine','pug');
+app.set('views', './views') // default
+
 //? Configuration
 
 console.log(`Application Name: ${config.get("name")}`);
@@ -57,7 +62,7 @@ const courses = [
 
 // TODO - GET method
 app.get("/", (req, res) => {
-  res.send("Hello world !!!");
+  res.render('index',{title: "HTML CONTENT", message : "Hello World"});
 });
 app.get("/contact", (req, res) => {
   res.send([1, 3, 4]);
